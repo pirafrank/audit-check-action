@@ -1,0 +1,45 @@
+name: "rust-audit-check"
+description: "Run cargo audit and check for RustSec security advisories"
+author: "RustSec"
+
+branding:
+  icon: "shield"
+  color: "gray-dark"
+
+inputs:
+  ignore:
+    description: "Comma-separated list of advisory IDs to ignore, for example RUSTSEC-2020-0036"
+    required: false
+    default: ""
+  working-directory:
+    description: "Directory containing the Cargo.lock file to audit"
+    required: false
+    default: "."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install cargo-audit
+      shell: bash
+      run: cargo install cargo-audit --locked
+
+    - name: Run cargo audit
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        INPUT_IGNORE: ${{ inputs.ignore }}
+      run: |
+        set -euo pipefail
+
+        args=()
+        if [[ -n "${INPUT_IGNORE}" ]]; then
+          IFS=',' read -ra ignored_advisories <<< "${INPUT_IGNORE}"
+          for advisory in "${ignored_advisories[@]}"; do
+            advisory="$(printf '%s' "${advisory}" | tr -d '[:space:]')"
+            if [[ -n "${advisory}" ]]; then
+              args+=(--ignore "${advisory}")
+            fi
+          done
+        fi
+
+        cargo audit "${args[@]}"
