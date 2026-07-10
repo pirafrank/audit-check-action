@@ -1,4 +1,4 @@
-name: "rust-audit-check"
+name: "rust-audit-check-action"
 description: "Run cargo audit and check for RustSec security advisories"
 author: "RustSec"
 
