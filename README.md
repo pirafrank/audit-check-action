@@ -31,6 +31,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          rustflags: ""
       - uses: pirafrank/audit-check-action@v1
 ```
 
@@ -55,12 +59,12 @@ For more detailed configuration, prefer a checked-in `audit.toml` file supported
 
 ## Requirements
 
-The runner must have Rust and Cargo available. GitHub-hosted Ubuntu runners should include them by default.
+The runner must have Rust and Cargo available. The usage example installs the stable Rust toolchain with [`actions-rust-lang/setup-rust-toolchain@v1`](https://github.com/actions-rust-lang/setup-rust-toolchain), which uses rustup's minimal profile for explicit toolchain installs.
 
 > [!IMPORTANT]
 > The required Rust version depends only on [`cargo-audit`](https://github.com/RustSec/rustsec/tree/main/cargo-audit). For example, the Rust version pinned in your `rust-toolchain.toml` may be too old for the current `cargo-audit` release.
 >
-> This action does not install Rust or change the version already present in the environment. If you need a newer toolchain for `cargo-audit`, install Rust from the stable channel and run this action in a separate job.
+> This action does not install Rust or change the version already present in the environment. Install Rust before running this action if your runner does not already provide a suitable toolchain.
 
 ## License
 
